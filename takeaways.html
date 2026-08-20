@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FOX · 13F Take-aways</title>
+<style>
+:root{
+  --fox-blue:#2F3396; --fox-blue-dark:#1F2466; --fox-blue-light:#5C66C4;
+  --fox-pos:#1F6B4F; --fox-neg:#A03333;
+  --text:#1A1A1A; --muted:#6B7280; --border:#E5E7EB; --bg:#FAFAFB; --card:#FFFFFF;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+header{background:var(--fox-blue);color:#fff;padding:16px 26px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+header h1{margin:0;font-size:19px;font-weight:800;letter-spacing:.2px}
+header .sub{color:#C9CCEF;font-size:12.5px}
+header a{color:#fff;font-size:12.5px;margin-left:auto;text-decoration:none;border:1px solid #ffffff55;padding:5px 12px;border-radius:14px}
+header a:hover{background:#ffffff22}
+main{max-width:1180px;margin:0 auto;padding:20px 22px 40px}
+.note{font-size:11.5px;color:var(--muted);margin:6px 0 18px}
+.searchbar{display:flex;gap:10px;align-items:center;margin:6px 0 8px;flex-wrap:wrap}
+.searchbar input{flex:1;min-width:260px;max-width:460px;padding:11px 15px;border:1px solid var(--border);border-radius:10px;font-size:14.5px;font-family:inherit;background:var(--card)}
+.searchbar input:focus{outline:2px solid var(--fox-blue-light)}
+.chip{background:var(--fox-blue);color:#fff;font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h2{margin:0 0 4px;font-size:14px;color:var(--fox-blue-dark)}
+.card .hint{font-size:11px;color:var(--muted);margin:0 0 10px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:right;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--border)}
+th.l,td.l{text-align:left}
+td{padding:7px 8px;text-align:right;border-bottom:1px solid #F0F1F4;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.l{white-space:normal}
+tr:hover td{background:#F6F7FE}
+.pos{color:var(--fox-pos);font-weight:700}
+.neg{color:var(--fox-neg);font-weight:700}
+.tk{font-weight:800;color:var(--fox-blue-dark)}
+.mut{color:var(--muted);font-size:11px}
+.bar{height:7px;border-radius:4px;background:#EDEEF8;position:relative;min-width:70px}
+.bar>span{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--fox-blue-light)}
+.act-new{color:var(--fox-pos);font-weight:700}
+.act-exited{color:var(--fox-neg);font-weight:700}
+.empty{color:var(--muted);padding:20px 4px;font-size:13px}
+section.block{margin-top:22px}
+h2.sec{font-size:15px;color:var(--fox-blue-dark);margin:0 0 2px}
+</style>
+</head>
+<body>
+<header>
+  <h1>FOX · 13F Take-aways</h1>
+  <span class="sub" id="asof">carregando…</span>
+  <a href="index.html">← Monitor completo</a>
+</header>
+<main>
+  <section class="block">
+    <h2 class="sec">🔎 Quem tem o papel?</h2>
+    <p class="note">Digite um <b>ticker</b> (ex.: NVDA) ou parte do nome do emissor (ex.: nvidia). Mostra todos os fundos do monitor com a posição, o % da carteira e a ação no trimestre.</p>
+    <div class="searchbar">
+      <input id="q" type="text" placeholder="Ticker ou nome — ex.: NVDA, TSM, meta, cerebras…" autofocus>
+      <span class="chip" id="qsum" style="display:none"></span>
+    </div>
+    <div class="card" id="qcard" style="display:none">
+      <table id="qtbl"></table>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">📈 Take-aways do trimestre</h2>
+    <p class="note" id="tanote"></p>
+    <div class="grid">
+      <div class="card">
+        <h2>Maiores ADIÇÕES (US$ agregado)</h2>
+        <p class="hint">Soma do Δ US$ de entradas + aumentos entre os fundos do trimestre vigente · nº de fundos comprando</p>
+        <table id="adds"></table>
+      </div>
+      <div class="card">
+        <h2>Maiores REDUÇÕES / SAÍDAS (US$ agregado)</h2>
+        <p class="hint">Soma do Δ US$ de reduções + zeragens · nº de fundos vendendo</p>
+        <table id="cuts"></table>
+      </div>
+      <div class="card">
+        <h2>Entradas mais POPULARES (nº de fundos)</h2>
+        <p class="hint">Posições NOVAS no trimestre, rankeadas por quantos fundos iniciaram</p>
+        <table id="popnew"></table>
+      </div>
+      <div class="card">
+        <h2>Zeragens mais POPULARES (nº de fundos)</h2>
+        <p class="hint">Posições ZERADAS no trimestre, rankeadas por quantos fundos saíram</p>
+        <table id="popout"></table>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function(){
+"use strict";
+var DATA=null, TMAP={};
+function fUsd(v){var a=Math.abs(v);if(a>=1e9)return "$"+(v/1e9).toFixed(1)+"B";if(a>=1e6)return "$"+(v/1e6).toFixed(0)+"M";return "$"+Math.round(v/1e3)+"k";}
+function fPct(v){return v==null?"—":(v*100).toFixed(1)+"%";}
+function esc(s){return String(s||"").replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+var ACT={new:"Entrada",increased:"Aumentou",decreased:"Reduziu",exited:"Zerou",unchanged_shares:"Mantida"};
+function actCls(a){return a==="new"?"act-new":(a==="exited"?"act-exited":(a==="increased"?"pos":(a==="decreased"?"neg":"mut")));}
+
+Promise.all([
+  fetch("data/monitor-data.json").then(function(r){return r.json();}),
+  fetch("data/ticker-map.json").then(function(r){return r.ok?r.json():{};}).catch(function(){return {};})
+]).then(function(res){
+  DATA=res[0]; TMAP=res[1]||{};
+  init();
+});
+
+function latestQuarter(){
+  var best="";
+  DATA.funds.forEach(function(f){var d=(f.snapshot||{}).report_date||"";if(d>best)best=d;});
+  return best;
+}
+function tickerOf(h){return TMAP[h.cusip]||null;}
+function keyOf(h){return tickerOf(h)||h.issuer;}
+
+function init(){
+  var q=latestQuarter();
+  var cur=DATA.funds.filter(function(f){return (f.snapshot||{}).report_date===q;});
+  document.getElementById("asof").textContent="carteiras de "+q+" · "+cur.length+" de "+DATA.funds.length+" fundos no trimestre vigente · gerado "+String(DATA.generated_at||"").slice(0,10);
+  document.getElementById("tanote").textContent="Agregado apenas dos "+cur.length+" fundos já no trimestre "+q+". Δ US$ mistura fluxo e efeito-preço (limitação padrão de 13F).";
+
+  // ------- agregações -------
+  var agg={};
+  cur.forEach(function(f){
+    var s=f.snapshot;
+    ["new","increased","decreased","exited"].forEach(function(kind){
+      ((s.changes||{})[kind]||[]).forEach(function(h){
+        var k=keyOf(h);
+        var a=agg[k]=agg[k]||{key:k,ticker:tickerOf(h),issuer:h.issuer,addUsd:0,addFunds:0,cutUsd:0,cutFunds:0,newFunds:[],outFunds:[]};
+        var d=h.delta_usd!=null?h.delta_usd:(kind==="exited"?-(h.previous_value_usd||0):(h.value_usd||0));
+        if(kind==="new"||kind==="increased"){a.addUsd+=Math.max(0,d);a.addFunds++;if(kind==="new")a.newFunds.push(f.name);}
+        else{a.cutUsd+=Math.abs(Math.min(0,d));a.cutFunds++;if(kind==="exited")a.outFunds.push(f.name);}
+      });
+    });
+  });
+  var arr=Object.keys(agg).map(function(k){return agg[k];});
+  function nameCell(a){return "<td class='l'>"+(a.ticker?"<span class='tk'>"+esc(a.ticker)+"</span> <span class='mut'>"+esc(a.issuer)+"</span>":esc(a.issuer))+"</td>";}
+  function fill(id,rows,cols){document.getElementById(id).innerHTML=rows.length?cols:"<tr><td class='empty'>sem dados</td></tr>";}
+
+  var adds=arr.filter(function(a){return a.addUsd>0;}).sort(function(x,y){return y.addUsd-x.addUsd;}).slice(0,15);
+  var mxA=adds.length?adds[0].addUsd:1;
+  fill("adds",adds,"<tr><th class='l'>Papel</th><th></th><th>Δ US$</th><th>Fundos</th></tr>"+adds.map(function(a){
+    return "<tr>"+nameCell(a)+"<td><div class='bar'><span style='width:"+(a.addUsd/mxA*100).toFixed(0)+"%'></span></div></td><td class='pos'>+"+fUsd(a.addUsd)+"</td><td>"+a.addFunds+"</td></tr>";}).join(""));
+
+  var cuts=arr.filter(function(a){return a.cutUsd>0;}).sort(function(x,y){return y.cutUsd-x.cutUsd;}).slice(0,15);
+  var mxC=cuts.length?cuts[0].cutUsd:1;
+  fill("cuts",cuts,"<tr><th class='l'>Papel</th><th></th><th>Δ US$</th><th>Fundos</th></tr>"+cuts.map(function(a){
+    return "<tr>"+nameCell(a)+"<td><div class='bar'><span style='width:"+(a.cutUsd/mxC*100).toFixed(0)+"%;background:var(--fox-neg)'></span></div></td><td class='neg'>−"+fUsd(a.cutUsd)+"</td><td>"+a.cutFunds+"</td></tr>";}).join(""));
+
+  var pn=arr.filter(function(a){return a.newFunds.length>0;}).sort(function(x,y){return y.newFunds.length-x.newFunds.length||y.addUsd-x.addUsd;}).slice(0,12);
+  fill("popnew",pn,"<tr><th class='l'>Papel</th><th>Fundos</th><th class='l'>Quem entrou</th></tr>"+pn.map(function(a){
+    return "<tr>"+nameCell(a)+"<td class='pos'>"+a.newFunds.length+"</td><td class='l mut'>"+esc(a.newFunds.slice(0,4).join(", "))+(a.newFunds.length>4?" +"+(a.newFunds.length-4):"")+"</td></tr>";}).join(""));
+
+  var po=arr.filter(function(a){return a.outFunds.length>0;}).sort(function(x,y){return y.outFunds.length-x.outFunds.length||y.cutUsd-x.cutUsd;}).slice(0,12);
+  fill("popout",po,"<tr><th class='l'>Papel</th><th>Fundos</th><th class='l'>Quem zerou</th></tr>"+po.map(function(a){
+    return "<tr>"+nameCell(a)+"<td class='neg'>"+a.outFunds.length+"</td><td class='l mut'>"+esc(a.outFunds.slice(0,4).join(", "))+(a.outFunds.length>4?" +"+(a.outFunds.length-4):"")+"</td></tr>";}).join(""));
+
+  // ------- busca -------
+  var inp=document.getElementById("q");
+  var t=null;
+  inp.addEventListener("input",function(){clearTimeout(t);t=setTimeout(search,180);});
+  function search(){
+    var q2=inp.value.trim().toLowerCase();
+    var card=document.getElementById("qcard"),sum=document.getElementById("qsum");
+    if(q2.length<2){card.style.display="none";sum.style.display="none";return;}
+    var hits=[];
+    DATA.funds.forEach(function(f){
+      var s=f.snapshot; if(!s)return;
+      (s.holdings||[]).forEach(function(h){
+        var tk=(tickerOf(h)||"").toLowerCase();
+        if(tk===q2||h.issuer.toLowerCase().indexOf(q2)>=0||(tk&&tk.indexOf(q2)===0)){
+          hits.push({fund:f.name,slug:f.slug,rd:s.report_date,h:h,tk:tickerOf(h)});
+        }
+      });
+    });
+    hits.sort(function(a,b){return (b.h.weight||0)-(a.h.weight||0);});
+    var tot=0; hits.forEach(function(x){tot+=x.h.value_usd||0;});
+    sum.style.display=""; card.style.display="";
+    sum.textContent=hits.length?(new Set(hits.map(function(x){return x.slug;})).size+" fundos · "+fUsd(tot)+" agregado"):"nenhum fundo";
+    var mxW=hits.length?Math.max.apply(null,hits.map(function(x){return x.h.weight||0;})):1;
+    document.getElementById("qtbl").innerHTML=hits.length?
+      "<tr><th class='l'>Fundo</th><th class='l'>Papel</th><th></th><th>% carteira</th><th>Valor</th><th>Ação no tri</th><th>Carteira de</th></tr>"+
+      hits.slice(0,60).map(function(x){
+        var h=x.h;
+        return "<tr><td class='l'><b>"+esc(x.fund)+"</b></td>"+
+          "<td class='l'>"+(x.tk?"<span class='tk'>"+esc(x.tk)+"</span> ":"")+"<span class='mut'>"+esc(h.issuer)+(h.put_call?" · "+esc(h.put_call.toUpperCase()):"")+"</span></td>"+
+          "<td><div class='bar'><span style='width:"+((h.weight||0)/mxW*100).toFixed(0)+"%'></span></div></td>"+
+          "<td><b>"+fPct(h.weight)+"</b></td><td>"+fUsd(h.value_usd||0)+"</td>"+
+          "<td class='"+actCls(h.quarter_action)+"'>"+(ACT[h.quarter_action]||h.quarter_action||"—")+"</td>"+
+          "<td class='mut'>"+esc(x.rd)+"</td></tr>";}).join("")+
+      (hits.length>60?"<tr><td class='empty' colspan='7'>+"+(hits.length-60)+" linhas — refine a busca</td></tr>":"")
+      :"<tr><td class='empty'>Nenhum fundo do monitor tem esse papel (ou o CUSIP ainda não está no ticker-map).</td></tr>";
+  }
+}
+})();
+</script>
+</body>
+</html>
