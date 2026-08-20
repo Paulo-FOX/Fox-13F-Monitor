@@ -134,8 +134,8 @@ function init(){
         var k=keyOf(h);
         var a=agg[k]=agg[k]||{key:k,ticker:tickerOf(h),issuer:h.issuer,addUsd:0,addFunds:0,cutUsd:0,cutFunds:0,newFunds:[],outFunds:[]};
         var d=h.delta_usd!=null?h.delta_usd:(kind==="exited"?-(h.previous_value_usd||0):(h.value_usd||0));
-        if(kind==="new"||kind==="increased"){a.addUsd+=Math.max(0,d);a.addFunds++;if(kind==="new")a.newFunds.push(f.name);}
-        else{a.cutUsd+=Math.abs(Math.min(0,d));a.cutFunds++;if(kind==="exited")a.outFunds.push(f.name);}
+        if(kind==="new"||kind==="increased"){a.addUsd+=Math.max(0,d);a.addFunds++;if(kind==="new"&&a.newFunds.indexOf(f.name)<0)a.newFunds.push(f.name);}
+        else{a.cutUsd+=Math.abs(Math.min(0,d));a.cutFunds++;if(kind==="exited"&&a.outFunds.indexOf(f.name)<0)a.outFunds.push(f.name);}
       });
     });
   });
