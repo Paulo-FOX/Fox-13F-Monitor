@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOX · Consenso 13F — Top 20</title>
+  <style>
+    :root {
+      --fox-blue: #2F3396;
+      --fox-blue-dark: #1F2466;
+      --fox-blue-light: #5C66C4;
+      --fox-pos: #1F6B4F;
+      --fox-neg: #A03333;
+      --text: #1A1A1A;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --bg: #FAFAFB;
+      --card: #FFFFFF;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1080px; margin: 0 auto; padding: 32px 24px 64px; }
+    header.top {
+      display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+      border-bottom: 2px solid var(--fox-blue);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    header.top .brand {
+      font-weight: 800; font-size: 14px; letter-spacing: 2px;
+      color: var(--fox-blue);
+    }
+    header.top h1 {
+      margin: 0; font-size: 22px; font-weight: 600; color: var(--text);
+      flex: 1;
+    }
+    header.top .chip {
+      font-size: 12px; color: var(--muted);
+      background: var(--card); border: 1px solid var(--border);
+      padding: 6px 10px; border-radius: 999px;
+    }
+    .nav-link {
+      font-size: 13px; color: var(--fox-blue); text-decoration: none;
+    }
+    .nav-link:hover { text-decoration: underline; }
+
+    section.block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+    section.block h2 {
+      margin: 0 0 6px; font-size: 17px; font-weight: 700; color: var(--fox-blue-dark);
+    }
+    section.block .sub {
+      margin: 0 0 16px; font-size: 13px; color: var(--muted); line-height: 1.5;
+    }
+
+    .controls {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+    }
+    .controls label { font-size: 13px; color: var(--muted); }
+    .controls input[type=search] {
+      font: inherit; font-size: 13px;
+      padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+      width: 220px; background: var(--card); color: var(--text);
+    }
+    .controls input[type=search]:focus { outline: none; border-color: var(--fox-blue); }
+    .controls .topn-buttons { display: flex; gap: 4px; }
+    .controls button.topn {
+      font: inherit; font-size: 12px; cursor: pointer;
+      padding: 5px 10px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--card); color: var(--text);
+    }
+    .controls button.topn.active {
+      background: var(--fox-blue); border-color: var(--fox-blue); color: #fff;
+    }
+    .controls .spacer { flex: 1 1 auto; }
+    .controls .meta { font-size: 12px; color: var(--muted); }
+
+    table.consensus {
+      width: 100%; border-collapse: collapse; font-size: 13px;
+    }
+    table.consensus thead th {
+      text-align: left; font-weight: 700; color: var(--muted);
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      padding: 10px 8px; border-bottom: 2px solid var(--fox-blue);
+      background: var(--bg);
+      position: sticky; top: 0; z-index: 1;
+    }
+    table.consensus thead th.r { text-align: right; }
+    table.consensus tbody td {
+      padding: 11px 8px; border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    table.consensus tbody td.r { text-align: right; font-variant-numeric: tabular-nums; }
+    table.consensus tbody tr:hover { background: rgba(47, 51, 150, 0.05); }
+    table.consensus .rank {
+      display: inline-block; width: 24px; height: 24px; border-radius: 50%;
+      text-align: center; line-height: 24px;
+      font-size: 11px; font-weight: 700;
+      background: var(--bg); color: var(--fox-blue-dark);
+    }
+    table.consensus .rank.top { background: var(--fox-blue); color: #fff; }
+    table.consensus .ticker { font-weight: 700; color: var(--fox-blue); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    table.consensus .issuer { color: var(--text); }
+    table.consensus .funds-cell { display: inline-flex; align-items: baseline; gap: 6px; }
+    .delta {
+      font-size: 11px; color: var(--muted); padding: 2px 6px; border-radius: 999px;
+      background: rgba(0,0,0,0.04);
+    }
+    .delta.pos { color: var(--fox-pos); background: rgba(31, 107, 79, 0.10); }
+    .delta.neg { color: var(--fox-neg); background: rgba(160, 51, 51, 0.10); }
+    .delta.zero { color: var(--muted); }
+
+    .download-row {
+      margin-top: 12px; text-align: right;
+    }
+    .download-row button {
+      font: inherit; font-size: 12px; cursor: pointer;
+      padding: 6px 12px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--card); color: var(--text);
+    }
+    .download-row button:hover { border-color: var(--fox-blue); color: var(--fox-blue); }
+
+    footer {
+      margin-top: 28px; padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px; color: var(--muted); line-height: 1.6;
+    }
+    .loading { padding: 32px; text-align: center; color: var(--muted); font-size: 13px; }
+    @media (max-width: 720px) {
+      header.top { gap: 8px; }
+      .controls { flex-wrap: wrap; }
+      .controls input[type=search] { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <span class="brand">FOX</span>
+      <h1>Consenso 13F — posições mais detidas</h1>
+      <span class="chip" id="report-chip">…</span>
+      <a class="nav-link" href="./">← voltar ao monitor</a>
+    </header>
+
+    <section class="block">
+      <h2>Top <span id="topn-label">20</span> empresas detidas pelo maior número de fundos</h2>
+      <p class="sub">
+        Agregação simples das holdings reportadas no 13F-HR dos 46 fundos rastreados pela FOX. Para cada empresa:
+        contagem de fundos que mantinham a posição no quarter-end de referência, peso médio nas carteiras
+        que detinham, e valor total reportado. Variações vs o trimestre anterior são derivadas dos
+        <em>previous_weight</em> nas holdings atuais — não capturam fundos que saíram completamente da posição.
+      </p>
+
+      <div class="controls">
+        <div class="topn-buttons">
+          <label style="margin-right:6px">Top N:</label>
+          <button class="topn" data-n="10">10</button>
+          <button class="topn active" data-n="20">20</button>
+          <button class="topn" data-n="30">30</button>
+          <button class="topn" data-n="50">50</button>
+        </div>
+        <span class="spacer"></span>
+        <label for="filter">Filtrar:</label>
+        <input id="filter" type="search" placeholder="ticker ou empresa…" autocomplete="off" />
+      </div>
+
+      <table class="consensus">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Empresa</th>
+            <th>Ticker</th>
+            <th class="r">Fundos</th>
+            <th class="r">Fundos T-1</th>
+            <th class="r">Peso médio</th>
+            <th class="r">Peso médio T-1</th>
+            <th class="r">$ Total reportado</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr><td colspan="8" class="loading">carregando…</td></tr>
+        </tbody>
+      </table>
+
+      <div class="download-row">
+        <button id="btn-csv">Baixar (.csv)</button>
+      </div>
+    </section>
+
+    <footer>
+      Fonte: SEC EDGAR 13F-HR information tables. Universo: 46 fundos rastreados pela FOX (ver <code>funds.py</code>).
+      Mapeamento CUSIP→Ticker via Bloomberg. 13F mostra apenas long de US equities ao fim do trimestre — não revela
+      preço médio, posições fora dos EUA, shorts, hedges, derivativos ou racional declarado pelo gestor.
+      <em>FOX Investimentos — uso interno.</em>
+    </footer>
+  </div>
+
+  <script>
+    let DATA = null;
+    let topN = 20;
+    let filterText = '';
+
+    const fmtPct = v => (v * 100).toFixed(1) + '%';
+    const fmtUSD = v => {
+      if (!isFinite(v)) return '–';
+      if (v >= 1e9) return '$' + (v / 1e9).toFixed(1) + 'B';
+      if (v >= 1e6) return '$' + (v / 1e6).toFixed(0) + 'M';
+      return '$' + v.toFixed(0);
+    };
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    }
+
+    async function load() {
+      try {
+        const r = await fetch('data/consensus-data.json', { cache: 'no-store' });
+        DATA = await r.json();
+      } catch (e) {
+        document.getElementById('report-chip').textContent = 'sem dados';
+        document.getElementById('rows').innerHTML =
+          '<tr><td colspan="8" class="loading">Não encontrei <code>data/consensus-data.json</code>. Rode <code>compute_consensus.py</code>.</td></tr>';
+        return;
+      }
+      const rd = DATA.report_date || '';
+      document.getElementById('report-chip').textContent = rd ? `Trimestre de referência ${rd}` : '';
+      bind();
+      render();
+    }
+
+    function bind() {
+      document.querySelectorAll('.topn').forEach(b => {
+        b.addEventListener('click', () => {
+          document.querySelectorAll('.topn').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          topN = parseInt(b.dataset.n, 10);
+          document.getElementById('topn-label').textContent = topN;
+          render();
+        });
+      });
+      document.getElementById('filter').addEventListener('input', e => {
+        filterText = e.target.value.trim().toLowerCase();
+        render();
+      });
+      document.getElementById('btn-csv').addEventListener('click', downloadCsv);
+    }
+
+    function visibleRows() {
+      const rows = (DATA.rows || []).slice(0, topN);
+      if (!filterText) return rows;
+      return rows.filter(r =>
+        (r.ticker || '').toLowerCase().includes(filterText) ||
+        (r.issuer || '').toLowerCase().includes(filterText)
+      );
+    }
+
+    function deltaCell(curr, prev, isPct) {
+      const d = curr - prev;
+      const eps = isPct ? 0.001 : 0.5;
+      if (Math.abs(d) < eps) return `<span class="delta zero">=</span>`;
+      const cls = d > 0 ? 'pos' : 'neg';
+      const sign = d > 0 ? '+' : '';
+      const str = isPct ? `${sign}${(d * 100).toFixed(1)} p.p.` : `${sign}${d}`;
+      return `<span class="delta ${cls}">${str}</span>`;
+    }
+
+    function render() {
+      const body = document.getElementById('rows');
+      const rows = visibleRows();
+      if (!rows.length) {
+        body.innerHTML = '<tr><td colspan="8" class="loading">nenhum resultado</td></tr>';
+        return;
+      }
+      const html = rows.map(r => {
+        const rankCls = r.rank <= 7 ? 'rank top' : 'rank';
+        const ticker = r.ticker || '–';
+        const fundsCell = `${r.funds_count} ${deltaCell(r.funds_count, r.prev_funds_count, false)}`;
+        const weightCell = `${fmtPct(r.avg_weight)} ${deltaCell(r.avg_weight, r.prev_avg_weight, true)}`;
+        return `
+          <tr>
+            <td><span class="${rankCls}">${r.rank}</span></td>
+            <td class="issuer">${escapeHtml(r.issuer)}</td>
+            <td><span class="ticker">${escapeHtml(ticker)}</span></td>
+            <td class="r"><span class="funds-cell">${fundsCell}</span></td>
+            <td class="r">${r.prev_funds_count}</td>
+            <td class="r">${weightCell}</td>
+            <td class="r">${fmtPct(r.prev_avg_weight)}</td>
+            <td class="r">${fmtUSD(r.total_value_usd)}</td>
+          </tr>`;
+      }).join('');
+      body.innerHTML = html;
+    }
+
+    function downloadCsv() {
+      const rows = (DATA.rows || []).slice(0, topN);
+      const header = ['rank', 'issuer', 'ticker', 'funds_count', 'prev_funds_count', 'avg_weight', 'prev_avg_weight', 'total_value_usd'];
+      const lines = [header.join(',')];
+      rows.forEach(r => {
+        const cells = header.map(h => {
+          const v = r[h];
+          if (typeof v === 'string') return `"${v.replace(/"/g, '""')}"`;
+          return v ?? '';
+        });
+        lines.push(cells.join(','));
+      });
+      const csv = lines.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `fox-consenso-top${topN}-${DATA.report_date || 'export'}.csv`;
+      a.click();
+    }
+
+    load();
+  </script>
+</body>
+</html>
